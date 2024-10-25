@@ -1,21 +1,35 @@
 {
   "name": "the24hourgptbackend",
   "version": "1.0.0",
-  "description": "this is the 24hourgpt backend server for the chrome extension",
+  "description": "Backend server for 24HourGPT Chrome extension, integrating OpenAI and Pinecone for chatbot functionality.",
   "main": "app.js",
+  "type": "module",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "jest"
   },
   "author": "ruizTechServices",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@mistralai/mistralai": "^1.1.0",
+    "@pinecone-database/pinecone": "^3.0.3",
     "axios": "^1.7.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "envalid": "^7.3.1",
     "express": "^4.21.1",
-    "nodemon": "^3.1.7",
+    "express-rate-limit": "^6.7.0",
+    "express-validator": "^7.0.1",
+    "helmet": "^6.0.1",
+    "morgan": "^1.10.0",
     "openai": "^4.68.1",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.6.1",
+    "nodemon": "^3.1.7",
+    "supertest": "^6.3.3"
   }
 }

@@ -1,102 +1,47 @@
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>24HourGPT - Your AI Assistant, All Day, Every Day</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 1rem;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-            padding: 2rem 0;
-        }
-        .hero {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 3rem 0;
-        }
-        .features {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-        }
-        .feature {
-            flex-basis: 30%;
-            background-color: #fff;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .cta {
-            text-align: center;
-            margin-top: 2rem;
-        }
-        .btn {
-            display: inline-block;
-            background-color: #4CAF50;
-            color: white;
-            padding: 0.8rem 1.5rem;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>24HourGPT</h1>
-    </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Embeddings</title>
+  </head>
+  <body>
+    <h1>Test Embeddings Endpoint</h1>
+    <form id="embeddingForm">
+      <label for="inputText">Input Text:</label><br />
+      <input type="text" id="inputText" name="inputText" required /><br /><br />
+      <label for="userId">User ID:</label><br />
+      <input type="text" id="userId" name="userId" required /><br /><br />
+      <button type="submit">Submit</button>
+    </form>
 
-    <section class="hero">
-        <div class="container">
-            <h2>Your AI Assistant, All Day, Every Day</h2>
-            <p>Experience the power of AI at your fingertips, 24/7</p>
-        </div>
-    </section>
+    <div id="result"></div>
 
-    <main class="container">
-        <section class="features">
-            <div class="feature">
-                <h3>Always Available</h3>
-                <p>Get instant responses any time of day or night.</p>
-            </div>
-            <div class="feature">
-                <h3>Versatile Knowledge</h3>
-                <p>From coding to creative writing, 24HourGPT has you covered.</p>
-            </div>
-            <div class="feature">
-                <h3>Personalized Experience</h3>
-                <p>Adapts to your needs and learns from your interactions.</p>
-            </div>
-        </section>
+    <script>
+      document
+        .getElementById("embeddingForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
 
-        <section class="cta">
-            <h2>Ready to Experience 24/7 AI Assistance?</h2>
-            <a href="#" class="btn">Get Started Now</a>
-        </section>
-    </main>
+          const inputText = document.getElementById("inputText").value;
 
-    <footer>
-        <div class="container">
-            <p>© 2023 24HourGPT. All rights reserved.</p>
-        </div>
-    </footer>
-</body>
+          const response = await fetch("/embeddings", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              inputText,
+            }),
+          });
+
+          const result = await response.json();
+          document.getElementById("result").textContent = JSON.stringify(
+            result,
+            null,
+            2
+          );
+        });
+    </script>
+  </body>
 </html>

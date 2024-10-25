@@ -1,24 +1,27 @@
-// server.js
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const path = require('path');
+// app.js
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import path from 'path';
+import llmRoutes from './api/llm.js';
+import embeddingsRoutes from './api/embeddings.js';
+import saveVectorRoutes from './api/save_vector.js';
 
 dotenv.config();
-
-const llmRoutes = require('./api/llm');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(path.resolve(), 'public')));
 
-app.use('/llm', llmRoutes);  // Unified endpoint for LLMs
+app.use('/llm', llmRoutes);
+app.use('/embeddings', embeddingsRoutes);
+app.use('/save-vector', saveVectorRoutes);
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'index.html'));
+    res.sendFile(path.join(path.resolve(), 'views', 'index.html'));
 });
 
 app.use((req, res) => {
