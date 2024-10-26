@@ -1,75 +1,58 @@
-// File: api/save_vector.js
-import express from "express";
-import initPinecone from "../utils/pinecone.js";
+// api/save_vector.js
+import express from 'express';
+import saveVector from '../utils/saveVector.js';
+import { createEmbedding } from '../utils/embeddingsService.js';
 
 const router = express.Router();
-const pinecone = await initPinecone();
-const index = pinecone.index("24hourgpt");
 
-async function saveVector(values, namespace, customId = null, metadata = {}) {
-    if (!values || !namespace) {
-        throw new Error("Vector and namespace are required");
-    }
-
-    if (values.length !== 1536) {
-        throw new Error("Invalid vector dimensions. Expected 1536 dimensions.");
-    }
-
+router.post('/', async (req, res) => {
     try {
-        const vectorData = {
-            id: customId || Date.now().toString(),
-            values: values,
-            metadata: {
-                ...metadata,
-                timestamp: new Date().toISOString(),
-            },
+        const { text, namespace, customId, metadata = {} } = req.body;
+
+        if (!text || !namespace) {
+            return res.status(400).json({
+                error: "Both text and namespace are required",
+                requiredFields: ["text", "namespace"],
+                optionalFields: ["customId", "metadata"]
+            });
+        }
+
+        // Use your existing embeddings service
+        const vector = await createEmbedding(text);
+
+        // Combine original metadata with text
+        const enhancedMetadata = {
+            ...metadata,
+            originalText: text
         };
 
-        // Correct upsert call for Pinecone
-        await index.upsert([
-            {
-                id: vectorData.id,
-                values: vectorData.values,
-                metadata: vectorData.metadata,
-                namespace: namespace, // Including the namespace here
-            }
-        ]);
-
-        return {
-            success: true,
-            vectorId: vectorData.id,
-            namespace: namespace,
-        };
-    } catch (error) {
-        console.error("Error saving vector:", error);
-        throw new Error(`Failed to save vector: ${error.message}`);
-    }
-}
-
-
-
-// POST route for saving vectors
-router.post("/", async (req, res) => {
-    const { vector, namespace, customId, metadata } = req.body;
-
-    if (!vector || !namespace) {
-        return res.status(400).json({
-            error: "Both vector and namespace are required",
-            requiredFields: ["vector", "namespace"],
-            optionalFields: ["customId", "metadata"],
+        const result = await saveVector({
+            vector,
+            namespace,
+            customId,
+            metadata: enhancedMetadata
         });
-    }
-
-    try {
-        const result = await saveVector(vector, namespace, customId, metadata);
-        res.json(result);
+        
+        res.status(200).json(result);
     } catch (error) {
-        const statusCode = error.message.includes("dimensions") ? 400 : 500;
-        res.status(statusCode).json({
-            error: error.message,
-            timestamp: new Date().toISOString(),
+        console.error('Error saving vector:', error);
+        res.status(500).json({ 
+            error: 'Failed to save vector',
+            details: error.message 
         });
     }
 });
 
 export default router;
+
+//  
+
+// {
+//     "text": "Yo, wattap, my name is Gio! Who are you?!",
+//     "namespace": "gio",
+//     "metadata": {
+//         "genre": "greeting",
+//         "category": "test"
+//     },
+//     "customId": "test_text_2"
+// }
