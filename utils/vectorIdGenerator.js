@@ -2,9 +2,14 @@ import fs from 'fs';
 import path from 'path';
 
 // Define path for vector_count.json
-const vectorCountFilePath = path.resolve('./data/vector_count.json');
+const dataDir = path.resolve('./data');
+const vectorCountFilePath = path.join(dataDir, 'vector_count.json');
 
-// Ensure the file exists; create if not
+// Ensure the data directory and file exist; create if not
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir);
+}
+
 if (!fs.existsSync(vectorCountFilePath)) {
     fs.writeFileSync(vectorCountFilePath, JSON.stringify([]));
 }
