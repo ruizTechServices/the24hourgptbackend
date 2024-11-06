@@ -1,14 +1,27 @@
-// File: services/llmService.js
+// File: utils/llmService.js
 import axios from "axios";
 import { Mistral } from "@mistralai/mistralai";
 import dotenv from "dotenv";
+import Redis from "ioredis";
 
 dotenv.config();
+const redisClient = new Redis(process.env.REDISCLOUD_URL);
 
+// Function to handle requests for OpenAI models with caching
 export async function handleGPTModels(userMessage, model) {
+  // Create a cache key based on model and message
+  const cacheKey = `gptCache:${model}:${userMessage}`;
   const apiUrl = "https://api.openai.com/v1/chat/completions";
 
   try {
+    // Check if the response is cached
+    const cachedResponse = await redisClient.get(cacheKey);
+    if (cachedResponse) {
+      console.log("Returning cached response for:", userMessage);
+      return JSON.parse(cachedResponse);
+    }
+
+    // If not cached, make the API request
     const response = await axios.post(
       apiUrl,
       {
@@ -24,13 +37,19 @@ export async function handleGPTModels(userMessage, model) {
       }
     );
 
-    return response.data.choices[0].message.content.trim();
+    const result = response.data.choices[0].message.content.trim();
+
+    // Cache the result with an expiration time (e.g., 1 hour)
+    await redisClient.set(cacheKey, JSON.stringify(result), "EX", 3600);
+
+    return result;
   } catch (error) {
     console.error("Error handling GPT models:", error);
     throw new Error("Failed to generate response from GPT model.");
   }
 }
 
+// Function to handle requests for the Mistral model
 export async function handleMistralModel(userMessage) {
   try {
     // Initialize the Mistral client with your API key

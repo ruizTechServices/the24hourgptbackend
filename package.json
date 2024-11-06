@@ -22,9 +22,11 @@
     "express-rate-limit": "^6.7.0",
     "express-validator": "^7.0.1",
     "helmet": "^6.0.1",
+    "ioredis": "^5.4.1",
     "morgan": "^1.10.0",
     "openai": "^4.68.1",
     "path": "^0.12.7",
+    "redis": "^4.7.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
