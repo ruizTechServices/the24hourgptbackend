@@ -1,6 +1,6 @@
 // File: api/llm.js
 import express from "express";
-import { handleGPTModels, handleMistralModel, handleGeminiModel, initializeGeminiChat } from "../services/llmService.js";
+import { handleGPTModels, handleMistralModel, handleGeminiModel, initializeGeminiChat } from "../utils/llmService";
 
 const router = express.Router();
 
