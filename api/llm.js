@@ -14,6 +14,7 @@ router.post("/chatbot", async (req, res) => {
   try {
     let botResponse;
 
+    // In llm.js (within the /chatbot route)
     switch (model) {
       case "gpt-4":
       case "gpt-4o":
@@ -22,21 +23,18 @@ router.post("/chatbot", async (req, res) => {
       case "mistral":
         botResponse = await handleMistralModel(userMessage);
         break;
-      case "Gemini"://make this one
+      case "Gemini":
         botResponse = await handleGeminiModel(userMessage);
         break;
-      case "Llama3"://make this one
+      case "Llama3":
         botResponse = await handleLlamaModel(userMessage);
-        break;
-      case "image-generation"://make this one
-        // Placeholder for future image generation model handling
-        botResponse = "Image generation model is currently under development.";
         break;
       default:
         return res.status(400).send("Model not supported");
     }
 
-    res.json({ botResponse });
+    res.json({ botResponse }); // Send the full response to the frontend
+
   } catch (error) {
     res.status(500).send("I'm sorry, I'm having trouble responding right now.");
   }
