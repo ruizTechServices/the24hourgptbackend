@@ -79,14 +79,6 @@ export async function handleGeminiModel(userMessage) {
   }
 }
 
-// Return the full response as per your requirement
-return response.data;
-  } catch (error) {
-  console.error('Error handling Gemini model:', error);
-  throw new Error('Error occurred while processing Gemini model response');
-}
-}
-
 
 //4. Llama Model
 export async function handleLlamaModel(userMessage) {
