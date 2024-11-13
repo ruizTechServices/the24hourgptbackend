@@ -6,6 +6,18 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 dotenv.config();
 
+const genAI = new GoogleGenerativeAI({ apiKey: process.env.GOOGLEAI_API_KEY });
+let chat;
+
+export async function initializeGeminiChat() {
+  chat = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" }).startChat({
+    history: [
+      { role: "user", parts: [{ text: "Hello" }] },
+      { role: "model", parts: [{ text: "Great to meet you. What would you like to know?" }] }
+    ]
+  });
+}
+
 
 //1. OpenAI GPT Models
 export async function handleGPTModels(userMessage, model) {
@@ -56,18 +68,18 @@ export async function handleMistralModel(userMessage) {
 // 3. Gemini API (Accumulate and Return Chunked Text)
 export async function handleGeminiModel(userMessage) {
   try {
-    const genAI = new GoogleGenerativeAI({ apiKey: process.env.GOOGLEAI_API_KEY });
-    const model = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContentStream(userMessage);
-
-    let fullResponse = ''; // Initialize an empty string to accumulate chunks
-
-    for await (const chunk of result.stream) {
-      const chunkText = chunk.text();
-      fullResponse += chunkText; // Concatenate each chunk to the full response
+    if (!chat) {
+      await initializeGeminiChat();
     }
 
-    return fullResponse.trim(); // Return the accumulated text
+    const result = await chat.sendMessageStream(userMessage);
+    let fullResponse = '';
+
+    for await (const chunk of result.stream) {
+      fullResponse += chunk.text();
+    }
+
+    return fullResponse.trim();
   } catch (error) {
     console.error("Error handling Gemini model:", error);
     throw new Error("Error occurred while processing Gemini model response");
