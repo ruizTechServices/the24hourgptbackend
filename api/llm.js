@@ -1,7 +1,7 @@
 // File: api/llm.js
 import express from "express";
 // File: api/llm.js
-import { handleGPTModels, handleMistralModel, handleGeminiModel, handleLlamaModel, initializeGeminiChat } from "../utils/llmService.js";
+import { handleGPTModels, handleMistralModel, handleGeminiModel, handleLlamaModel } from "../utils/llmService.js";
 
 
 const router = express.Router();
@@ -26,6 +26,9 @@ router.post("/chatbot", async (req, res) => {
         break;
       case "Gemini":
         botResponse = await handleGeminiModel(userMessage);
+        break;
+      case "Llama":
+        botResponse = await handleLlamaModel(userMessage);
         break;
       default:
         return res.status(400).send("Model not supported");

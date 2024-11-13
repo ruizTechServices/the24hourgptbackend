@@ -6,19 +6,6 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 dotenv.config();
 
-const genAI = new GoogleGenerativeAI({ apiKey: process.env.GOOGLEAI_API_KEY });
-let chat;
-
-export async function initializeGeminiChat() {
-  chat = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" }).startChat({
-    history: [
-      { role: "user", parts: [{ text: "Hello" }] },
-      { role: "model", parts: [{ text: "Great to meet you. What would you like to know?" }] }
-    ]
-  });
-}
-
-
 //1. OpenAI GPT Models
 export async function handleGPTModels(userMessage, model) {
   const apiUrl = "https://api.openai.com/v1/chat/completions";
@@ -65,26 +52,36 @@ export async function handleMistralModel(userMessage) {
   }
 }
 
-// 3. Gemini API (Accumulate and Return Chunked Text)
+// 3. Gemini API (Return Full Response without Stream)
 export async function handleGeminiModel(userMessage) {
   try {
-    if (!chat) {
-      await initializeGeminiChat();
-    }
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GOOGLEAI_API_KEY}`;
 
-    const result = await chat.sendMessageStream(userMessage);
-    let fullResponse = '';
+    // Construct the payload for Gemini API as per the required format
+    const payload = {
+      contents: [
+        {
+          parts: [
+            { text: userMessage }
+          ]
+        }
+      ]
+    };
 
-    for await (const chunk of result.stream) {
-      fullResponse += chunk.text();
-    }
+    const response = await axios.post(apiUrl, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-    return fullResponse.trim();
+    // Return the full response as per your requirement
+    return response.data;
   } catch (error) {
-    console.error("Error handling Gemini model:", error);
-    throw new Error("Error occurred while processing Gemini model response");
+    console.error('Error handling Gemini model:', error);
+    throw new Error('Error occurred while processing Gemini model response');
   }
 }
+
 
 //4. Llama Model
 export async function handleLlamaModel(userMessage) {
