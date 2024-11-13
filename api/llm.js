@@ -22,7 +22,13 @@ router.post("/chatbot", async (req, res) => {
       case "mistral":
         botResponse = await handleMistralModel(userMessage);
         break;
-      case "image-generation":
+      case "Gemini"://make this one
+        botResponse = await handleGeminiModel(userMessage);
+        break;
+      case "Llama3"://make this one
+        botResponse = await handleLlamaModel(userMessage);
+        break;
+      case "image-generation"://make this one
         // Placeholder for future image generation model handling
         botResponse = "Image generation model is currently under development.";
         break;
