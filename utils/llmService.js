@@ -52,12 +52,9 @@ export async function handleMistralModel(userMessage) {
   }
 }
 
-// 3. Gemini API (Return Full Response without Stream)
 export async function handleGeminiModel(userMessage) {
   try {
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GOOGLEAI_API_KEY}`;
-
-    // Construct the payload for Gemini API as per the required format
     const payload = {
       contents: [
         {
@@ -74,12 +71,20 @@ export async function handleGeminiModel(userMessage) {
       },
     });
 
-    // Return the full response as per your requirement
-    return response.data;
+    const botText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    return botText || "No response";
   } catch (error) {
     console.error('Error handling Gemini model:', error);
     throw new Error('Error occurred while processing Gemini model response');
   }
+}
+
+// Return the full response as per your requirement
+return response.data;
+  } catch (error) {
+  console.error('Error handling Gemini model:', error);
+  throw new Error('Error occurred while processing Gemini model response');
+}
 }
 
 
