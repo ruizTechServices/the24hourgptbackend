@@ -6,7 +6,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 dotenv.config();
 
-//1. OpenAI GPT Models
+//1. OpenAI GPT Models Cleared and Working
 export async function handleGPTModels(userMessage, model) {
   const apiUrl = "https://api.openai.com/v1/chat/completions";
 
@@ -34,7 +34,7 @@ export async function handleGPTModels(userMessage, model) {
 }
 
 
-//2. Mistral Model
+//2. Mistral Model Cleared and Working
 export async function handleMistralModel(userMessage) {
   try {
     // Initialize the Mistral client with your API key
@@ -52,6 +52,7 @@ export async function handleMistralModel(userMessage) {
   }
 }
 
+//3. Gemini Model Cleared and Working
 export async function handleGeminiModel(userMessage) {
   try {
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GOOGLEAI_API_KEY}`;
@@ -77,46 +78,4 @@ export async function handleGeminiModel(userMessage) {
     console.error('Error handling Gemini model:', error);
     throw new Error('Error occurred while processing Gemini model response');
   }
-}
-
-
-//4. Llama Model
-export async function handleLlamaModel(userMessage) {
-  try {
-    // Call the query function with the appropriate data format
-    const data = {
-      inputs: userMessage,
-      parameters: {
-        max_new_tokens: 150
-      }
-    };
-
-    // Make the query to the Llama API endpoint
-    const response = await query(data);
-
-    // Return or process the response as needed
-    return response;
-  } catch (error) {
-    console.error("Error handling Llama model:", error);
-    throw new Error("Error occurred while processing Llama model response");
-  }
-}
-
-// Function to make the API request to Hugging Face
-async function query(data) {
-  const response = await fetch(
-    "https://svsc0tn91zujzyzx.us-east-1.aws.endpoints.huggingface.cloud",
-    {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-      },
-      method: "POST",
-      body: JSON.stringify(data),
-    }
-  );
-
-  // Process the response
-  const result = await response.json();
-  return result;
 }

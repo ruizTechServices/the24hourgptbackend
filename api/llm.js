@@ -1,7 +1,8 @@
-// File: api/llm.js
+// File: api/llm.js This File is Cleared! 11/13/2024; Luis Ruiz 
+// This file is for the LLM API.
+//This is exclusively for the llms. Here I would leave all the llms stateless so that they can use and be used by any other service or project.
 import express from "express";
-// File: api/llm.js
-import { handleGPTModels, handleMistralModel, handleGeminiModel, handleLlamaModel } from "../utils/llmService.js";
+import { handleGPTModels, handleMistralModel, handleGeminiModel } from "../utils/llmService.js";
 
 
 const router = express.Router();
@@ -17,18 +18,15 @@ router.post("/chatbot", async (req, res) => {
     let botResponse;
 
     switch (model) {
-      case "gpt-4":
-      case "gpt-4o":
+      case "gpt-4"://cleared and working
+      case "gpt-4o"://cleared and working
         botResponse = await handleGPTModels(userMessage, model);
         break;
-      case "mistral":
+      case "mistral"://cleared and working
         botResponse = await handleMistralModel(userMessage);
         break;
-      case "Gemini":
+      case "Gemini"://cleared and working
         botResponse = await handleGeminiModel(userMessage);
-        break;
-      case "Llama":
-        botResponse = await handleLlamaModel(userMessage);
         break;
       default:
         return res.status(400).send("Model not supported");

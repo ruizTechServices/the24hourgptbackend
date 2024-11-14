@@ -8,7 +8,6 @@ import embeddingsRoutes from './api/embeddings.js';
 import saveVectorRoutes from './api/save_vector.js';
 import collectionList from './api/list_collections.js';
 import indexList from './api/list_indexes.js';
-import vectorSave from './api/save_vector.js';
 
 dotenv.config();
 
@@ -24,7 +23,6 @@ app.use('/embeddings', embeddingsRoutes);
 app.use('/save-vector', saveVectorRoutes);
 app.use('/list-collections', collectionList);
 app.use('/list-indexes', indexList);
-app.use('/save-vector', vectorSave);
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(path.resolve(), 'views', 'index.html'));
